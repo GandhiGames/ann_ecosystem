@@ -1,0 +1,4 @@
+sceneSetups:
+- path: Assets/ecosystem/Scenes/Staging Automation.unity
+  isLoaded: 1
+  isActive: 1
