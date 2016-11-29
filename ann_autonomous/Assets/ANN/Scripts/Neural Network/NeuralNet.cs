@@ -61,13 +61,16 @@ public class NeuralNet
 
 
     }
+	public List<float> Update(params float[] inputs)
+	{
+		List<float> inputList = new List<float>();
+		inputList.AddRange(inputs);
+		return Update (inputList);
+	}
 
     //Receives input and returns output: performs caluclations for neural net
-    public List<float> Update(params float[] inputs)
+	public List<float> Update(List<float> inputList)
     {
-        List<float> inputList = new List<float>();
-        inputList.AddRange(inputs);
-
         //Output from each layer
         List<float> outputs = new List<float>();
 

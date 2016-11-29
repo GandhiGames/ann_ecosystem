@@ -26,6 +26,8 @@ namespace Automation
 
         public bool lockMovementOnSingleAxis = false;
 
+		public bool rotateTowardsHeading = false;
+
         public Vector2 heading { get; private set; }
         public Vector2 velocity { get; private set; }
 
@@ -78,26 +80,13 @@ namespace Automation
         {
             Vector2 force = m_BehaviourManager.GetForce();
 
-            /*
-            if (Mathf.Abs(force.x) > Mathf.Abs(force.y))
-            {
-                force = new Vector2(force.x, 0f);
-            }
-            else
-            {
-                force = new Vector2(0f, force.y);
-            }
-            */
-
             UpdateVelocity(force);
 
             velocity = PerformSmootingIfEnabled(velocity);
 
             velocity /= Friction;
 
-            //print((double)velocity.x + ":" + (double)velocity.y);
             transform.position += (Vector3)velocity;
-
         }
 
 
@@ -109,7 +98,6 @@ namespace Automation
 
             velocity += acceleration * Time.deltaTime;
             velocity = Truncate(velocity, MaxVelocity);
-            //print((double)velocity.x + ":" + (double)velocity.y);
 
             if (lockMovementOnSingleAxis)
             {
@@ -127,13 +115,13 @@ namespace Automation
             {
                 heading = (velocity * Time.deltaTime).normalized;
 
-                /*
-                if (velocity.sqrMagnitude > 0.01f)
+                
+				if (rotateTowardsHeading)
                 {
                     float angle = Mathf.Atan2(heading.y, heading.x) * Mathf.Rad2Deg;
                     transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
                 }
-                */
+                
             }
 
 
