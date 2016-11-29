@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/ecosystem/Scenes/Staging Automation.unity
+- path: Assets/GA/Scenes/GA Staging.unity
   isLoaded: 1
   isActive: 1

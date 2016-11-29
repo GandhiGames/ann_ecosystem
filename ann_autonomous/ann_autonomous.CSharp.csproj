@@ -63,6 +63,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\ANN\Scripts\ANNTest.cs" />
+    <Compile Include="Assets\ANN\Scripts\Neural Network\NeuralNet.cs" />
+    <Compile Include="Assets\ANN\Scripts\Neural Network\NeuralNetController.cs" />
+    <Compile Include="Assets\ANN\Scripts\Neural Network\Neuron.cs" />
+    <Compile Include="Assets\ANN\Scripts\Neural Network\NeuronLayer.cs" />
+    <Compile Include="Assets\ANN\Scripts\Utilities.cs" />
+    <Compile Include="Assets\GA\GeneticAlgorithm.cs" />
+    <Compile Include="Assets\GA\Predator.cs" />
     <Compile Include="Assets\ecosystem\Scripts\Core\AIBehaviour.cs" />
     <Compile Include="Assets\ecosystem\Scripts\Core\BehaviourManager.cs" />
     <Compile Include="Assets\ecosystem\Scripts\Core\Entity.cs" />

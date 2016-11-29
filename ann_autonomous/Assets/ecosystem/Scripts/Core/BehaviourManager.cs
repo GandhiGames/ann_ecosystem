@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 namespace Automation
 {
@@ -9,19 +9,27 @@ namespace Automation
     /// </summary>
     public class BehaviourManager : MonoBehaviour
     {
-        private AIBehaviour[] behaviours;
+        private AIBehaviour[] m_Behaviours;
+        private List<float> m_InitialWeights;
 
         // Use this for initialization
         void Start()
         {
             GetBehaviours();
+
+            m_InitialWeights = new List<float>();
+
+            foreach(var behaviour in m_Behaviours)
+            {
+                m_InitialWeights.Add(behaviour.Weight);
+            }
         }
 
         private void GetBehaviours()
         {
-            behaviours = gameObject.GetComponents<AIBehaviour>();
+            m_Behaviours = gameObject.GetComponents<AIBehaviour>();
 
-            if (behaviours == null || behaviours.Length == 0)
+            if (m_Behaviours == null || m_Behaviours.Length == 0)
             {
                 Debug.LogError("Entity: No Behaviour Scripts Attached to Object " + gameObject.name);
             }
@@ -33,7 +41,7 @@ namespace Automation
         {
             Vector2 force = Vector2.zero;
 
-            foreach (var behaviour in behaviours)
+            foreach (var behaviour in m_Behaviours)
             {
 
                 if (behaviour.enabled)
@@ -46,7 +54,27 @@ namespace Automation
 
         }
 
+        public void SetWeights(List<float> weights)
+        {
+            if(weights.Count != m_Behaviours.Length)
+            {
+                Debug.LogError("Weight count not matching");
+            }
+
+            for(int i = 0; i < weights.Count; i++)
+            {
+                m_Behaviours[i].Weight = weights[i];
+            }
 
 
+        }
+
+        public void Reset()
+        {
+            for (int i = 0; i < m_Behaviours.Length; i++)
+            {
+                m_Behaviours[i].Weight = m_InitialWeights[i];
+            }
+        }
     }
 }
