@@ -4,19 +4,26 @@ using System.Collections.Generic;
 
 namespace Automation
 {
+    public interface MovingAgent
+    {
+        float maxVelocity { get; }
+        Vector2 velocity { get; }
+        Vector2 heading { get; }
+        Vector2 position { get; }
+    }
 
     /// <summary>
     /// Gets force from the Behaviour system and applies it to the objects position.
     /// Attach to an entity that has behaviour scripts attached.
     /// </summary>
     [RequireComponent(typeof(BehaviourManager))]
-    public class Entity : MonoBehaviour
+    public class Entity : MonoBehaviour, MovingAgent
     {
-        public float MaxVelocity = 2f;
-        public float Mass = 0.5f;
 
-        // How far the agent can see - objects within this radius will be taken into account when apply behaviours.
-        public float SightRadius = 20;
+        [SerializeField]
+        private float m_MaxVelocity = 2f;
+        public float maxVelocity { get { return m_MaxVelocity; } }
+        public float Mass = 0.5f;
 
         // Friction the agent experiences travelling.
         public float Friction = 1.01f;
@@ -30,7 +37,7 @@ namespace Automation
 
         public Vector2 heading { get; private set; }
         public Vector2 velocity { get; private set; }
-
+        public Vector2 position { get { return transform.position; } }
 
         private BehaviourManager m_BehaviourManager;
         private Smoother m_Smoother;
@@ -97,7 +104,7 @@ namespace Automation
             Vector2 acceleration = force / Mass;
 
             velocity += acceleration * Time.deltaTime;
-            velocity = Truncate(velocity, MaxVelocity);
+            velocity = Truncate(velocity, maxVelocity);
 
             if (lockMovementOnSingleAxis)
             {

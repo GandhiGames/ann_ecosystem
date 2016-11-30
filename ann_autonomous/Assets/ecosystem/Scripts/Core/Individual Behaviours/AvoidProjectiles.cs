@@ -11,18 +11,18 @@ namespace Automation
 		/// </summary>
 		public class AvoidProjectiles : AIBehaviour
 		{
-
-				// Script name - used in GetEntitiesInSight for debugging.
-				private static readonly string SCRIPT_NAME = typeof(AvoidProjectiles).Name;
+        public string tagName;
 
 				// Increases the strength of the force - lower numbers equals a stronger force.
 				private static readonly float MAG_OFFSET = 0.1f;
 
-				void Start ()
-				{
-						Initialise ();
-				}
-
+        void Start()
+        {
+            if (tagName.Equals(""))
+            {
+                Debug.LogWarning("No tag name set");
+            }
+        }
 				/// <summary>
 				/// Iterates through any objects in sight that have a tag of PROJECTILE_TAG_NAME and returns a seperation force.
 				/// </summary>
@@ -30,11 +30,12 @@ namespace Automation
 				public override Vector2 GetForce ()
 				{
 						Vector2 steeringForce = Vector2.zero;
-			
-						var entities = GetEntitiesInSight (entity.SightRadius, PROJECTILE_TAG_NAME, SCRIPT_NAME, LOGGING_ENABLED);
+
+            var entities = m_Sight.GetAgentsInSightWithTag(tagName);
+
 
 						foreach (var obj in entities) {
-								Vector2 toAgent = transform.position - obj.transform.position;
+								Vector2 toAgent = (Vector2)transform.position - obj.position;
 								steeringForce += toAgent.normalized / (toAgent.magnitude * MAG_OFFSET);
 						}
 			

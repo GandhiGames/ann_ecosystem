@@ -12,16 +12,11 @@ namespace Automation
     {
         public string tagName;
 
-        // Script name - used in GetEntitiesInSight for debugging.
-        private static readonly string SCRIPT_NAME = typeof(Alignment).Name;
-
         void Start()
         {
-            Initialise();
-
             if (tagName.Equals(""))
             {
-                tagName = ENEMY_TAG_NAME;
+                Debug.LogWarning("No tag name set");
             }
         }
 
@@ -35,39 +30,21 @@ namespace Automation
 
             Vector2 averageHeading = Vector2.zero;
 
-            var entities = GetEntitiesInSight(entity.SightRadius, tagName, SCRIPT_NAME, LOGGING_ENABLED);
+            var entities = m_Sight.GetAgentsInSightWithTag(tagName);
 
             foreach (var obj in entities)
             {
-                averageHeading += GetObjHeading(obj);
+                averageHeading += obj.heading;
             }
 
 
             if (entities.Count > 0)
             {
                 averageHeading /= entities.Count;
-                averageHeading -= entity.heading;
+                averageHeading -= m_Entity.heading;
             }
 
             return averageHeading;
-        }
-
-        /// <summary>
-        /// Gets the object Entity script attached to the object and returns the entities heading.
-        /// </summary>
-        /// <returns>The objects heading or vector2.zero if Entity script is not found.</returns>
-        /// <param name="obj">Object.</param>
-        private Vector2 GetObjHeading(GameObject obj)
-        {
-            var entityScript = obj.GetComponent<Entity>();
-
-            if (!entityScript)
-            {
-                Debug.Log(SCRIPT_NAME + ": No Script with name entity found");
-                return Vector2.zero;
-            }
-
-            return entityScript.heading;
         }
 
     }

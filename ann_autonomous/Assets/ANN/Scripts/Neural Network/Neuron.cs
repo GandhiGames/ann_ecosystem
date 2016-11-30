@@ -8,7 +8,7 @@ struct Neuron
     /// <summary>
     /// Number of inputs into the neural network
     /// </summary>
-    public int NumInputs
+    public int numInputs
     {
         get; private set;
     }
@@ -16,7 +16,7 @@ struct Neuron
     /// <summary>
     /// Weight of each input: determines activity of network
     /// </summary>
-    public List<float> Weight
+    public List<float> weight
     {
         get; private set;
     }
@@ -24,14 +24,14 @@ struct Neuron
     public Neuron(int numOfInput)
     {
         //Extra input for threshold - so it can be evolved with GA
-        this.NumInputs = numOfInput + 1;
+        this.numInputs = numOfInput + 1;
 
-        Weight = new List<float>();
+        weight = new List<float>();
 
         //Initialise random weights for each input
-        for (int i = 0; i < this.NumInputs; i++)
+        for (int i = 0; i < numInputs; i++)
         {
-            Weight.Add(Utilities.instance.RandomMinMax(-1, 1));
+            weight.Add(Utilities.instance.RandomMinMax(-1f, 1f));
         }
     }
 }

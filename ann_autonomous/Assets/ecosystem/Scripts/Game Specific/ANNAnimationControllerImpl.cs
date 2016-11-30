@@ -8,7 +8,7 @@ namespace Automation
 
     }
 
-    [RequireComponent(typeof(Animator), typeof(Entity))]
+    [RequireComponent(typeof(Animator), typeof(MovingAgent))]
     public class ANNAnimationControllerImpl : MonoBehaviour, ANNAnimationController
     {
         private static readonly int XVELOCITY_HASH = Animator.StringToHash("XVelocity");
@@ -16,12 +16,12 @@ namespace Automation
         private static readonly int VELOCITY_HASH = Animator.StringToHash("VelocityNorm");
 
         private Animator m_Animator;
-        private Entity m_Entity;
+        private MovingAgent m_Entity;
 
         void Awake()
         {
             m_Animator = GetComponent<Animator>();
-            m_Entity = GetComponent<Entity>();
+            m_Entity = GetComponent<MovingAgent>();
         }
 
         void Update()

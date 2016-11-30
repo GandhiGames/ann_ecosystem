@@ -8,17 +8,26 @@ namespace Automation
 		/// </summary>
 		public class Flee : AIBehaviour
 		{
-				private static readonly string SCRIPT_NAME = typeof(Flee).Name;
+        public string tagName;
+
+
+        void Start()
+        {
+            if (tagName.Equals(""))
+            {
+                Debug.LogWarning("No tag name set");
+            }
+        }
 
 				public override Vector2 GetForce ()
 				{
-						var player = GetEntityInSight (entity.SightRadius, PLAYER_TAG_NAME, SCRIPT_NAME, LOGGING_ENABLED);
+            var player = m_Sight.GetAgentsInSightWithTag(tagName);
 
-						if (!player) {
+						if (player.Count == 0) {
 								return Vector2.zero;
 						}
 
-						return transform.position - player.transform.position;
+						return (Vector2)transform.position - player[0].position;
 				}
 		}
 }

@@ -10,21 +10,31 @@ namespace Automation
 		public class Hide : AIBehaviour
 		{
 
-				// Script name - used in GetEntitiesWithTagName for debugging.
-				private static readonly string SCRIPT_NAME = typeof(Hide).Name;
+        public string obstacleTagName;
+        public string toHideFromTagName;
 
-				void Start ()
-				{
-						Initialise ();
-				}
+        void Start()
+        {
+            if (obstacleTagName.Equals(""))
+            {
+                Debug.LogWarning("No tag name set");
+            }
+
+            if (toHideFromTagName.Equals(""))
+            {
+                Debug.LogWarning("No tag name set");
+            }
+        }
+                // Script name - used in GetEntitiesWithTagName for debugging.
+        private static readonly string SCRIPT_NAME = typeof(Hide).Name;
 
 				public override Vector2 GetForce ()
 				{
 						float distanceToClosest = float.MaxValue;
 						Vector2 bestHidingSpot = Vector2.zero;
 
-						var obstacles = GetEntitiesWithTagName (OBSTACLE_TAG_NAME, SCRIPT_NAME, LOGGING_ENABLED);
-						var player = GetEntityWithTagName (PLAYER_TAG_NAME, SCRIPT_NAME, LOGGING_ENABLED);
+						var obstacles = GetEntitiesWithTagName (obstacleTagName, SCRIPT_NAME, LOGGING_ENABLED);
+						var player = GetEntityWithTagName (toHideFromTagName, SCRIPT_NAME, LOGGING_ENABLED);
 
 						if (!player)
 								return Vector2.zero;

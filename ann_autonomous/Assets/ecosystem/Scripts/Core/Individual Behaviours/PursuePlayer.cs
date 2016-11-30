@@ -8,38 +8,50 @@ namespace Automation
 		/// </summary>
 		public class PursuePlayer : AIBehaviour
 		{
-				private static readonly string SCRIPT_NAME = typeof(PursuePlayer).Name;
+        public string toPursueTagName;
+
+   
+
+                private static readonly string SCRIPT_NAME = typeof(PursuePlayer).Name;
 
         private static PlayerController PLAYER_MOVEMENT;
 
-        void Awake()
+        protected override void Awake()
         {
-            PLAYER_MOVEMENT = FindObjectOfType<PlayerController>();
+            base.Awake();
+
+            if (PLAYER_MOVEMENT == null)
+            {
+                PLAYER_MOVEMENT = FindObjectOfType<PlayerController>();
+            }
         }
 
-				void Start ()
+        void Start()
+        {
+            if (toPursueTagName.Equals(""))
+            {
+                Debug.LogWarning("No tag name set");
+            }
+        }
+
+        public override Vector2 GetForce ()
 				{
-						Initialise ();
-				}
-		
-				public override Vector2 GetForce ()
-				{
-						var player = GetEntityWithTagName (PLAYER_TAG_NAME, SCRIPT_NAME, LOGGING_ENABLED);
+						var player = GetEntityWithTagName (toPursueTagName, SCRIPT_NAME, LOGGING_ENABLED);
 
 						if (!player)
 								return Vector2.zero;
 
 						Vector2 toPlayer = player.transform.position - transform.position;
 
-						float relativeHeading = Vector2.Dot (entity.heading, PLAYER_MOVEMENT.heading);
+						float relativeHeading = Vector2.Dot (m_Entity.heading, PLAYER_MOVEMENT.heading);
 
-						if ((Vector2.Dot (toPlayer, entity.heading) > 0)
+						if ((Vector2.Dot (toPlayer, m_Entity.heading) > 0)
 								&& (relativeHeading < -0.95)) {
 								return Arrive (player.transform.position, 10f);
 						}
 
 						float LookAheadTime = toPlayer.magnitude
-								/ (entity.MaxVelocity + PLAYER_MOVEMENT.velocity.magnitude);
+								/ (m_Entity.maxVelocity + PLAYER_MOVEMENT.velocity.magnitude);
 
 						Vector2 pos = (Vector2)player.transform.position;
 

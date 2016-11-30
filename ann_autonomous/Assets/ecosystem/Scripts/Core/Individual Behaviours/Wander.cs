@@ -19,8 +19,6 @@ namespace Automation
 
             wanderTarget = new Vector2(WanderRadius * Mathf.Cos(theta),
                            WanderRadius * Mathf.Sin(theta));
-
-            Initialise();
         }
 
         public override Vector2 GetForce()
@@ -39,7 +37,7 @@ namespace Automation
 
             //Vector2 targetPosition = transform.TransformPoint (target);
 
-            Vector2 displacement = entity.heading.normalized * WanderDistance;
+            Vector2 displacement = m_Entity.heading.normalized * WanderDistance;
 
             Vector2 targetPosition = (Vector2)transform.position + wanderTarget + displacement;
 

@@ -43,7 +43,6 @@ namespace Automation
 
             foreach (var behaviour in m_Behaviours)
             {
-
                 if (behaviour.enabled)
                 {
                     force += behaviour.GetForce() * behaviour.Weight;
@@ -51,11 +50,15 @@ namespace Automation
             }
 
             return force;
-
         }
 
         public void SetWeights(List<float> weights)
         {
+            foreach(var w in weights)
+            {
+                print(w);
+            }
+
             if(weights.Count != m_Behaviours.Length)
             {
                 Debug.LogError("Weight count not matching");

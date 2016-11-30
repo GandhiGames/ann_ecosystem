@@ -15,11 +15,6 @@ namespace Automation
 
 				public float ObstacleRayAngle = 25f;
 		
-				// Use this for initialization
-				void Start ()
-				{
-						Initialise ();
-				}
 
 				public override Vector2 GetForce ()
 				{
@@ -69,7 +64,7 @@ namespace Automation
 
 				private Ray2D CreateFrontFacingRay ()
 				{
-						var frontRay = new Ray2D (transform.position, entity.heading);
+						var frontRay = new Ray2D (transform.position, m_Entity.heading);
 			
 						if (LOGGING_ENABLED)
 								Debug.DrawRay (frontRay.origin, frontRay.direction, Color.green);
@@ -82,14 +77,14 @@ namespace Automation
 						var rayList = new List <Ray2D> ();
 			
 						//right
-						Vector2 rightDir = Quaternion.AngleAxis (-ObstacleRayAngle, Vector3.forward) * entity.heading;
+						Vector2 rightDir = Quaternion.AngleAxis (-ObstacleRayAngle, Vector3.forward) * m_Entity.heading;
 						Ray2D rightRay = new Ray2D (transform.position, rightDir);
 						rayList.Add (rightRay);
 
 						if (LOGGING_ENABLED)
 								Debug.DrawRay (rightRay.origin, rightRay.direction, Color.yellow);
 
-						rightDir = Quaternion.AngleAxis (-ObstacleRayAngle * 2f, Vector3.forward) * entity.heading;
+						rightDir = Quaternion.AngleAxis (-ObstacleRayAngle * 2f, Vector3.forward) * m_Entity.heading;
 						rightRay = new Ray2D (transform.position, rightDir);
 						rayList.Add (rightRay);
 
@@ -98,14 +93,14 @@ namespace Automation
 
 
 						//left
-						Vector2 leftDir = Quaternion.AngleAxis (ObstacleRayAngle, Vector3.forward) * entity.heading;
+						Vector2 leftDir = Quaternion.AngleAxis (ObstacleRayAngle, Vector3.forward) * m_Entity.heading;
 						Ray2D leftRay = new Ray2D (transform.position, leftDir);
 						rayList.Add (leftRay);
 
 						if (LOGGING_ENABLED)
 								Debug.DrawRay (leftRay.origin, leftRay.direction, Color.blue);
 
-						leftDir = Quaternion.AngleAxis (ObstacleRayAngle * 2f, Vector3.forward) * entity.heading;
+						leftDir = Quaternion.AngleAxis (ObstacleRayAngle * 2f, Vector3.forward) * m_Entity.heading;
 						leftRay = new Ray2D (transform.position, leftDir);
 						rayList.Add (leftRay);
 

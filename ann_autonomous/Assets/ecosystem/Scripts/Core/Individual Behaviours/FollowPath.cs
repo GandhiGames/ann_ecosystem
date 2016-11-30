@@ -16,15 +16,23 @@ namespace Automation
 				// When entity is within this distance to waypoint it will be registered as visited.
 				public float WaypointProximity = 5f;
 
+        public string waypointTagName;
+
 				// Script name - used in GetEntitiesInSight for debugging.
 				private static readonly string SCRIPT_NAME = typeof(FollowPath).Name;
 
 				private WaypointManager waypointManager;
 
-				void OnEnable ()
-				{
-						Initialise ();
+        void Start()
+        {
+            if (waypointTagName.Equals(""))
+            {
+                Debug.LogWarning("No tag name set");
+            }
+        }
 
+        void OnEnable ()
+				{
 						InitialiseWaypointManager ();
 				}
 
@@ -33,7 +41,7 @@ namespace Automation
 						waypointManager = GetComponent<WaypointManager> ();
 
 						//Find all game objects with tag name equal to WAYPOINT_TAG_NAME
-						var waypoints = GetEntitiesWithTagName (WAYPOINT_TAG_NAME, SCRIPT_NAME, false);
+						var waypoints = GetEntitiesWithTagName (waypointTagName, SCRIPT_NAME, false);
 
 						waypointManager.InitialiseWaypoints (waypoints);
 
@@ -56,7 +64,7 @@ namespace Automation
 								var wayPointPos = waypointManager.GetCurrentWaypoint (transform.position);
 
 								if (wayPointPos != Vector2.zero) {
-										force = (wayPointPos - (Vector2)transform.position).normalized * entity.MaxVelocity;
+										force = (wayPointPos - (Vector2)transform.position).normalized * m_Entity.maxVelocity;
 								}
 						}
 

@@ -6,28 +6,29 @@ using System.Collections.Generic;
 /// </summary>
 public class NeuralNet
 {
-    private int _numOfInput; //Number of inputs for each neuron
-    public int numOfInput { get { return _numOfInput; } }
+    private int m_NumOfInput; //Number of inputs for each neuron
+    public int numOfInput { get { return m_NumOfInput; } }
 
-    private int _numOfOutput; //Number of outputs of each neuron
-    public int numOfOutput { get { return _numOfOutput; } }
+    private int m_NumOfOutput; //Number of outputs of each neuron
+    public int numOfOutput { get { return m_NumOfOutput; } }
 
-    private int _numHiddenLayers; //Number of hidden layers
-    public int numOfHiddenLayers { get { return _numHiddenLayers; } }
+    private int m_NumHiddenLayers; //Number of hidden layers
+    public int numOfHiddenLayers { get { return m_NumHiddenLayers; } }
 
-    private int _numOfNeuronsPerHiddenLayer; //Number of neurons per hidden layer
-    public int numOfNeuronsPerHiddenLayer { get { return _numOfNeuronsPerHiddenLayer; } }
+    private int m_NumOfNeuronsPerHiddenLayer; //Number of neurons per hidden layer
+    public int numOfNeuronsPerHiddenLayer { get { return m_NumOfNeuronsPerHiddenLayer; } }
 
-    List<NeuronLayer> layers; //List containing layers
+    private List<NeuronLayer> m_Layers; //List containing layers
+    private List<float> m_Weights = new List<float>();
 
     public NeuralNet(int numOfInput, int numOfOutput, int numOfHiddenLayers, int numOfNeuronsPerHiddenLayer)
     {
-        _numOfInput = numOfInput;
-        _numOfOutput = numOfOutput;
-        _numHiddenLayers = numOfHiddenLayers;
-        _numOfNeuronsPerHiddenLayer = numOfNeuronsPerHiddenLayer;
+        m_NumOfInput = numOfInput;
+        m_NumOfOutput = numOfOutput;
+        m_NumHiddenLayers = numOfHiddenLayers;
+        m_NumOfNeuronsPerHiddenLayer = numOfNeuronsPerHiddenLayer;
 
-        layers = new List<NeuronLayer>();
+        m_Layers = new List<NeuronLayer>();
 
         CreateNeuralNet();
 
@@ -36,27 +37,27 @@ public class NeuralNet
     public void CreateNeuralNet()
     {
         //If there are hidden layers
-        if (_numHiddenLayers > 0)
+        if (m_NumHiddenLayers > 0)
         {
             //Create first layer
-            layers.Add(new NeuronLayer(_numOfNeuronsPerHiddenLayer, _numOfInput));
+            m_Layers.Add(new NeuronLayer(m_NumOfNeuronsPerHiddenLayer, m_NumOfInput));
 
             //Create any other subsequent hidden layers
-            for (int i = 0; i < _numHiddenLayers - 1; i++)
+            for (int i = 0; i < m_NumHiddenLayers - 1; i++)
             {
                 //Input from first hidden layer
-                layers.Add(new NeuronLayer(_numOfNeuronsPerHiddenLayer,
-                    _numOfNeuronsPerHiddenLayer));
+                m_Layers.Add(new NeuronLayer(m_NumOfNeuronsPerHiddenLayer,
+                    m_NumOfNeuronsPerHiddenLayer));
             }
 
             //Output layer
             //Input from subsequent or first hidden layer
-            layers.Add(new NeuronLayer(_numOfOutput, _numOfNeuronsPerHiddenLayer));
+            m_Layers.Add(new NeuronLayer(m_NumOfOutput, m_NumOfNeuronsPerHiddenLayer));
         }
         else
         { //If no hidden layers
           //Input layer
-            layers.Add(new NeuronLayer(_numOfOutput, _numOfInput));
+            m_Layers.Add(new NeuronLayer(m_NumOfOutput, m_NumOfInput));
         }
 
 
@@ -77,14 +78,14 @@ public class NeuralNet
         int weightCount = 0;
 
         //Return empty if not corrent number of inputs
-        if (inputList.Count != _numOfInput)
+        if (inputList.Count != m_NumOfInput)
         {
             Console.WriteLine("NeuralNet|Update|Size of inputs list not equal number of inputs");
             return outputs;
         }
 
         //Each layer
-        for (int i = 0; i < _numHiddenLayers + 1; i++)
+        for (int i = 0; i < m_NumHiddenLayers + 1; i++)
         {
             if (i > 0)
             {
@@ -97,23 +98,25 @@ public class NeuralNet
 
             weightCount = 0;
 
-            for (int j = 0; j < layers[i].NumNeurons; ++j)
+            for (int j = 0; j < m_Layers[i].numNeurons; ++j)
             {
                 float netInput = 0.0f;
 
-                int NumInputs = layers[i].Neurons[j].NumInputs;
+                int numInputs = m_Layers[i].neurons[j].numInputs;
 
                 //Each weight
-                for (int k = 0; k < NumInputs - 1; ++k)
+                for (int k = 0; k < numInputs - 1; ++k)
                 {
                     //Sum the weights x inputs
-                    netInput += layers[i].Neurons[j].Weight[k] *
+                    netInput += m_Layers[i].neurons[j].weight[k] *
                         inputList[weightCount++];
                 }
 
                 //Add in the bias
-                netInput += layers[i].Neurons[j].Weight[NumInputs - 1] *
+                netInput += m_Layers[i].neurons[j].weight[numInputs - 1] *
                     Utilities.instance.bias;
+
+                
 
                 //Store result in output
                 outputs.Add(Sigmoid(netInput));
@@ -128,65 +131,46 @@ public class NeuralNet
     //Gets weights from network
     public List<float> GetWeights()
     {
-        //Temporarily store wights
-        List<float> weights = new List<float>();
-
-        //Each layer
-        for (int i = 0; i < _numHiddenLayers + 1; ++i)
+        if(m_Weights.Count == 0)
         {
-            //Each neuron
-            for (int j = 0; j < layers[i].NumNeurons; ++j)
-            {
-                //Each weight
-                for (int k = 0; k < layers[i].Neurons[j].NumInputs; ++k)
-                {
-                    weights.Add(layers[i].Neurons[j].Weight[k]);
-                }
-            }
+            CalculateWeights();
         }
-
-        return weights;
+      
+        return m_Weights;
     }
 
     //Gets number of weights
     public int GetNumberOfWeights()
     {
-        int weights = 0;
-
-        //Each layer
-        for (int i = 0; i < _numHiddenLayers + 1; ++i)
+        if(m_Weights.Count == 0)
         {
-            //Eeach neuron
-            for (int j = 0; j < layers[i].NumNeurons; ++j)
-            {
-                //Each weight
-                for (int k = 0; k < layers[i].Neurons[j].NumInputs; ++k)
-                    weights++;
-            }
+            CalculateWeights();
         }
 
-        return weights;
+        return m_Weights.Count;
     }
 
     //Sets weights for network (initially set to random values)
-    public void SetWeights(ref List<float> weights)
+    public void SetWeights(List<float> weights)
     {
         //Used to cycle through received weights
         int weightCount = 0;
 
         //Each layer
-        for (int i = 0; i < _numHiddenLayers + 1; ++i)
+        for (int i = 0; i < m_NumHiddenLayers + 1; ++i)
         {
             //Each neuron
-            for (int j = 0; j < layers[i].NumNeurons; ++j)
+            for (int j = 0; j < m_Layers[i].numNeurons; ++j)
             {
                 //Each weight
-                for (int k = 0; k < layers[i].Neurons[j].NumInputs; ++k)
+                for (int k = 0; k < m_Layers[i].neurons[j].numInputs; ++k)
                 {
-                    layers[i].Neurons[j].Weight[k] = weights[weightCount++];
+                    m_Layers[i].neurons[j].weight[k] = weights[weightCount++];
                 }
             }
         }
+
+        m_Weights = weights;
     }
 
     //S shaped output
@@ -210,24 +194,70 @@ public class NeuralNet
 
         NeuralNet other = (NeuralNet)obj;
 
-        return (other._numOfInput == this._numOfInput && other._numOfOutput == this._numOfOutput
-         && other._numHiddenLayers == this._numHiddenLayers
-         && other._numOfNeuronsPerHiddenLayer == this._numOfNeuronsPerHiddenLayer);
+        var otherWeights = other.GetWeights();
+        var thisWeights = GetWeights();
+
+        if(otherWeights.Count != thisWeights.Count)
+        {
+            return false;
+        }
+
+        for(int i = 0; i < thisWeights.Count; i++)
+        {
+            if(thisWeights[i] != otherWeights[i])
+            {
+                return false;
+            }
+        }
+
+        return true;
+
+        /*
+        return (other.m_NumOfInput == this.m_NumOfInput && other.m_NumOfOutput == this.m_NumOfOutput
+         && other.m_NumHiddenLayers == this.m_NumHiddenLayers
+         && other.m_NumOfNeuronsPerHiddenLayer == this.m_NumOfNeuronsPerHiddenLayer);
+         */
     }
 
     public override int GetHashCode()
     {
+        List<float> weights = GetWeights();
+
         return new HashCodeBuilder().
                         Add(numOfInput).
                         Add(numOfOutput).
                         Add(numOfHiddenLayers).
                         Add(numOfNeuronsPerHiddenLayer).
+                        Add(weights[0]).
+                        Add(weights[1]).
+                        Add(weights[2]).
+                        Add(weights[3]).
                         GetHashCode();
     }
 
     private int GetHash(int value)
     {
         return 31 + value; 
+    }
+
+    private void CalculateWeights()
+    {
+        m_Weights.Clear();
+
+        //Each layer
+        for (int i = 0; i < m_NumHiddenLayers + 1; ++i)
+        {
+            //Each neuron
+            for (int j = 0; j < m_Layers[i].numNeurons; ++j)
+            {
+                //Each weight
+                for (int k = 0; k < m_Layers[i].neurons[j].numInputs; ++k)
+                {
+                    m_Weights.Add(m_Layers[i].neurons[j].weight[k]);
+                }
+            }
+        }
+
     }
 }
 

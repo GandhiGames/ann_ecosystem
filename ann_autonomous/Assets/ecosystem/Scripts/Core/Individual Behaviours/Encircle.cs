@@ -9,38 +9,39 @@ namespace Automation
 		public class Encircle : AIBehaviour
 		{
 
-				public bool TightCircle = false;
+				public bool tightCircle = false;
 
-				public string EncircleObjectWithTag;
+				public string tagName;
 
-				public float DistanceFromTarget = 30f;
+				public float distanceFromTarget = 30f;
 
 				private static readonly string SCRIPT_NAME = typeof(Encircle).Name;
 
 				// Use this for initialization
 				void Start ()
 				{
-						Initialise ();
 
-						if (EncircleObjectWithTag == "")
-								EncircleObjectWithTag = PLAYER_TAG_NAME;
-		
-				}
+            if (tagName.Equals(""))
+            {
+                Debug.LogWarning("No tag name set");
+            }
+
+        }
 		
 				public override Vector2 GetForce ()
 				{
-						var objToEncircle = GetEntityWithTagName (EncircleObjectWithTag, SCRIPT_NAME, LOGGING_ENABLED);
+						var objToEncircle = GetEntityWithTagName (tagName, SCRIPT_NAME, LOGGING_ENABLED);
 
 						if (!objToEncircle)
 								return Vector2.zero;
 
-						if (Vector2.Distance (objToEncircle.transform.position, transform.position) > DistanceFromTarget) {
+						if (Vector2.Distance (objToEncircle.transform.position, transform.position) > distanceFromTarget) {
 								return Arrive (objToEncircle.transform.position, 1f);
 						} else {
 
 								Vector2 retForce = Vector2.zero;
 
-								if (TightCircle)
+								if (tightCircle)
 										retForce = objToEncircle.transform.position - transform.position;
 								else
 										retForce = transform.position - objToEncircle.transform.position;

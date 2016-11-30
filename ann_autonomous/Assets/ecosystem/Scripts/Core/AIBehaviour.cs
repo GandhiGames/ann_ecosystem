@@ -8,20 +8,9 @@ namespace Automation
     /// Base class for each steering behaviour. 
     /// Also has a list of tag and layer names used throughout the project.
     /// </summary>
-    [RequireComponent(typeof(Entity))]
+    [RequireComponent(typeof(MovingAgent))]
     public abstract class AIBehaviour : MonoBehaviour
     {
-
-        // Script name used for debug purposes.
-        private static readonly string SCRIPT_NAME = typeof(AIBehaviour).Name;
-
-        // Tag Names.
-        protected static readonly string ENEMY_TAG_NAME = "Enemy";
-        protected static readonly string OBSTACLE_TAG_NAME = "Obstacle";
-        protected static readonly string PLAYER_TAG_NAME = "Player";
-        protected static readonly string PROJECTILE_TAG_NAME = "Bullet";
-        protected static readonly string WAYPOINT_TAG_NAME = "Waypoint";
-        protected static readonly string BLACKHOLE_TAG_NAME = "BlackHole";
 
         // Layer Names.
         public static readonly string WALL_LAYER_NAME = "Wall";
@@ -29,80 +18,31 @@ namespace Automation
         // Default weight for each behaviour - edit individual weights using inspector.
         public float Weight = 10f;
 
-        [HideInInspector]
-        protected Entity
-                entity;
-
-        public abstract Vector2 GetForce();
+        protected MovingAgent m_Entity;
+        protected Sight m_Sight;
 
         // If enabled will output debug logs when entities with required tags are not found in scene.
         protected static readonly bool LOGGING_ENABLED = true;
 
-        void Start()
-        {
-            Initialise();
-        }
+        // Script name used for debug purposes.
+        private static readonly string SCRIPT_NAME = typeof(AIBehaviour).Name;
 
-        protected void Initialise()
+        protected virtual void Awake()
         {
-            entity = GetComponent<Entity>();
+            m_Sight = GetComponentInChildren<Sight>();
+            m_Entity = GetComponent<MovingAgent>();
 
-            if (!entity && LOGGING_ENABLED)
+            if (m_Entity == null && LOGGING_ENABLED)
             {
                 Debug.LogError(SCRIPT_NAME + ": Entity Script on object not found");
             }
         }
 
-        /// <summary>
-        /// Gets the entity in with tag name if in sight range.
-        /// </summary>
-        /// <returns>The entity if within sight radius.</returns>
-        /// <param name="sightRadius">Sight radius.</param>
-        /// <param name="tagName">Tag name of object.</param>
-        /// <param name="scriptName">Script name of calling script. Used for debugging.</param>
-        /// <param name="loggingEnabled">If set to <c>true</c> debug will be logged if entity not found.</param>
-        protected GameObject GetEntityInSight(float sightRadius,
-                                               string tagName, string scriptName, bool loggingEnabled)
-        {
-            var entity = GetEntityWithTagName(tagName, scriptName, loggingEnabled);
-
-            if (entity)
-            {
-                float to = (entity.transform.position - transform.position).sqrMagnitude;
-
-                if (to < (sightRadius * sightRadius))
-                {
-                    return entity;
-                }
-            }
-
-            return null;
-
-        }
-
-        protected List<GameObject> GetEntitiesInSight(float sightRadius,
-                                              string tagName, string scriptName, bool loggingEnabled)
-        {
-            var entities = GetEntitiesWithTagName(tagName, scriptName, loggingEnabled);
 
 
-            var retVals = new List<GameObject>();
+        public abstract Vector2 GetForce();
 
-            foreach (var obj in entities)
-            {
-                if (obj.gameObject.GetInstanceID() != this.gameObject.GetInstanceID())
-                {
-                    float to = (obj.transform.position - transform.position).sqrMagnitude;
 
-                    if (to < (sightRadius * sightRadius))
-                    {
-                        retVals.Add(obj);
-                    }
-                }
-            }
-
-            return retVals;
-        }
 
         /// <summary>
         /// Gets entities with tag name that are in scene. Does not take into account sight range.
@@ -152,11 +92,11 @@ namespace Automation
             {
                 var speed = dist / deceleration;
 
-                speed = Mathf.Min(speed, entity.MaxVelocity);
+                speed = Mathf.Min(speed, m_Entity.maxVelocity);
 
                 var desiredVel = toTarget * speed / dist;
 
-                return (desiredVel - entity.velocity);
+                return (desiredVel - m_Entity.velocity);
             }
 
             return Vector2.zero;

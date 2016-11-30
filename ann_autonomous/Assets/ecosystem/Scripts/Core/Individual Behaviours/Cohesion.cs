@@ -14,16 +14,12 @@ namespace Automation
         public string tagName;
         public bool decelerateToTarget = true;
 
-        // Script name - used in GetEntitiesInSight for debugging.
-        private static readonly string SCRIPT_NAME = typeof(Cohesion).Name;
-
         void Start()
         {
-            Initialise();
 
             if (tagName.Equals(""))
             {
-                tagName = ENEMY_TAG_NAME;
+                Debug.LogWarning("No tag name set");
             }
         }
 
@@ -35,11 +31,13 @@ namespace Automation
         {
             Vector2 centreOfMass = Vector2.zero;
 
-            var entities = GetEntitiesInSight(entity.SightRadius, tagName, SCRIPT_NAME, LOGGING_ENABLED);
+            var entities = m_Sight.GetAgentsInSightWithTag(tagName);
+                
+               
 
             foreach (var obj in entities)
             {
-                centreOfMass += (Vector2)obj.transform.position;
+                centreOfMass += obj.position;
             }
 
             if (entities.Count > 0)

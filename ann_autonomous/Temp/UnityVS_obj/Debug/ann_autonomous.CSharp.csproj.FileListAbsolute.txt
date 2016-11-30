@@ -1,0 +1,13 @@
+C:\Users\rober\Documents\ann_ecosystem\ann_autonomous\Temp\UnityVS_bin\Debug\Assembly-CSharp.dll
+C:\Users\rober\Documents\ann_ecosystem\ann_autonomous\Temp\UnityVS_bin\Debug\Assembly-CSharp.pdb
+C:\Users\rober\Documents\ann_ecosystem\ann_autonomous\Temp\UnityVS_bin\Debug\UnityEditor.dll
+C:\Users\rober\Documents\ann_ecosystem\ann_autonomous\Temp\UnityVS_bin\Debug\UnityEngine.dll
+C:\Users\rober\Documents\ann_ecosystem\ann_autonomous\Temp\UnityVS_bin\Debug\UnityEngine.Networking.dll
+C:\Users\rober\Documents\ann_ecosystem\ann_autonomous\Temp\UnityVS_bin\Debug\UnityEngine.UI.dll
+C:\Users\rober\Documents\ann_ecosystem\ann_autonomous\Temp\UnityVS_bin\Debug\UnityEngine.xml
+C:\Users\rober\Documents\ann_ecosystem\ann_autonomous\Temp\UnityVS_bin\Debug\UnityEngine.UI.xml
+C:\Users\rober\Documents\ann_ecosystem\ann_autonomous\Temp\UnityVS_bin\Debug\UnityEngine.Networking.xml
+C:\Users\rober\Documents\ann_ecosystem\ann_autonomous\Temp\UnityVS_bin\Debug\UnityEditor.xml
+C:\Users\rober\Documents\ann_ecosystem\ann_autonomous\Temp\UnityVS_obj\Debug\ann_autonomous.CSharp.csprojResolveAssemblyReference.cache
+C:\Users\rober\Documents\ann_ecosystem\ann_autonomous\Temp\UnityVS_obj\Debug\Assembly-CSharp.dll
+C:\Users\rober\Documents\ann_ecosystem\ann_autonomous\Temp\UnityVS_obj\Debug\Assembly-CSharp.pdb

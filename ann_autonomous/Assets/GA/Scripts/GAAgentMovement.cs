@@ -3,9 +3,12 @@ using System.Collections;
 
 namespace Automation
 {
-	public class GAAgentMovement : MonoBehaviour
+	public class GAAgentMovement : MonoBehaviour, MovingAgent
 	{
-		public float maxVelocity = 2f;
+        [SerializeField]
+		private float m_MaxVelocity = 2f;
+        public float maxVelocity { get { return m_MaxVelocity; } }
+
 		public float mass = 5f;
 
 		// Friction the agent experiences travelling.
@@ -18,6 +21,7 @@ namespace Automation
 		public Vector2 velocity { get; private set; }
 
 		public Vector2 heading { get; private set; }
+        public Vector2 position { get { return transform.position; } }
 
 		private Smoother m_Smoother;
 
@@ -35,7 +39,13 @@ namespace Automation
 			}
 		}
 
-		public void Reset ()
+        void Start()
+        {
+            float rotation = Random.Range(0f, 2f) * (Mathf.PI * 2);
+            heading = new Vector2((float)Mathf.Sin(rotation), (float)-Mathf.Cos(rotation));
+        }
+
+        public void Reset ()
 		{
 			velocity = Vector2.zero;
 		}
@@ -66,7 +76,7 @@ namespace Automation
 			Vector2 acceleration = force / mass;
 
 			velocity += acceleration * Time.deltaTime;
-			velocity = Truncate (velocity, maxVelocity);
+			velocity = Truncate (velocity, m_MaxVelocity);
 
 			if (lockMovementOnSingleAxis) {
 				if (Mathf.Abs (velocity.x) > Mathf.Abs (velocity.y)) {

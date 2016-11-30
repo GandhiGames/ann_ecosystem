@@ -10,24 +10,30 @@ namespace Automation
 		{
 				public float StrengthOfPull = 2;
 
-				//Script name - used in GetEntitiesInSight for debugging
-				private static readonly string SCRIPT_NAME = typeof(GravitationPull).Name;
+        public string blackHoleTagName;
+
+                //Script name - used in GetEntitiesInSight for debugging
+        private static readonly string SCRIPT_NAME = typeof(GravitationPull).Name;
 
 				private GameObject[] blackHoles;
 
-				// Use this for initialization
-				void Start ()
-				{
-						Initialise ();
 
-						if (LOGGING_ENABLED) {
+
+        void Start ()
+				{
+            if (blackHoleTagName.Equals(""))
+            {
+                Debug.LogWarning("No tag name set");
+            }
+
+            if (LOGGING_ENABLED) {
 								CheckBlackHolesPresentInScene ();
 						}
 				}
 
 				private void CheckBlackHolesPresentInScene ()
 				{
-						GetEntitiesWithTagName (BLACKHOLE_TAG_NAME, SCRIPT_NAME, LOGGING_ENABLED);
+						GetEntitiesWithTagName (blackHoleTagName, SCRIPT_NAME, LOGGING_ENABLED);
 				}
 
 				public override Vector2 GetForce ()
@@ -36,7 +42,7 @@ namespace Automation
 						Vector2 force = Vector2.zero;
 
 						if (blackHoles == null) {
-								blackHoles = GetEntitiesWithTagName (BLACKHOLE_TAG_NAME, SCRIPT_NAME, LOGGING_ENABLED);
+								blackHoles = GetEntitiesWithTagName (blackHoleTagName, SCRIPT_NAME, LOGGING_ENABLED);
 						}
 
 						foreach (var blackHole in blackHoles) {
