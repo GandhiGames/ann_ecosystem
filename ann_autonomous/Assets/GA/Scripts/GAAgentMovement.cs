@@ -5,9 +5,10 @@ namespace Automation
 {
 	public class GAAgentMovement : MonoBehaviour, MovingAgent
 	{
-        [SerializeField]
+		[SerializeField]
 		private float m_MaxVelocity = 2f;
-        public float maxVelocity { get { return m_MaxVelocity; } }
+
+		public float maxVelocity { get { return m_MaxVelocity; } }
 
 		public float mass = 5f;
 
@@ -21,9 +22,12 @@ namespace Automation
 		public Vector2 velocity { get; private set; }
 
 		public Vector2 heading { get; private set; }
-        public Vector2 position { get { return transform.position; } }
+
+		public Vector2 position { get { return transform.position; } }
 
 		private Smoother m_Smoother;
+
+		private AgentDatabase AGENT_DB;
 
 		void Awake ()
 		{
@@ -37,15 +41,31 @@ namespace Automation
 					m_Smoother = gameObject.AddComponent<Smoother> ();
 				}
 			}
+
+			if (AGENT_DB == null) {
+				AGENT_DB = FindObjectOfType<AgentDatabase> ();
+			}
 		}
 
-        void Start()
-        {
-            float rotation = Random.Range(0f, 2f) * (Mathf.PI * 2);
-            heading = new Vector2((float)Mathf.Sin(rotation), (float)-Mathf.Cos(rotation));
-        }
+		void Start ()
+		{
+			float rotation = Random.Range (0f, 2f) * (Mathf.PI * 2);
+			heading = new Vector2 ((float)Mathf.Sin (rotation), (float)-Mathf.Cos (rotation));
 
-        public void Reset ()
+
+		}
+
+		void OnEnable()
+		{
+			AGENT_DB.Add (this);
+		}
+
+		void OnDisable()
+		{
+			AGENT_DB.Remove (this);
+		}
+
+		public void Reset ()
 		{
 			velocity = Vector2.zero;
 		}

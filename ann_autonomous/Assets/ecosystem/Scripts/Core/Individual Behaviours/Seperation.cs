@@ -31,7 +31,7 @@ namespace Automation
 
             foreach (var obj in entities)
             {
-                Vector2 toAgent = (Vector2)transform.position - obj.position;
+				Vector2 toAgent = (Vector2)transform.position - (Vector2)obj.transform.position;
                 steeringForce += toAgent.normalized / (toAgent.magnitude * MAG_OFFSET);
             }
 

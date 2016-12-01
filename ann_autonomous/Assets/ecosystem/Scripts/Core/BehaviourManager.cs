@@ -54,10 +54,12 @@ namespace Automation
 
         public void SetWeights(List<float> weights)
         {
+			/*
             foreach(var w in weights)
             {
                 print(w);
             }
+            */
 
             if(weights.Count != m_Behaviours.Length)
             {

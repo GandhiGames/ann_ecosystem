@@ -4,85 +4,55 @@ using System.Collections.Generic;
 
 namespace Automation
 {
-    public interface Sight
-    {
-        List<MovingAgent> GetAgentsInSightWithTag(string tag);
-        void Clear();
-    }
+	public interface Sight
+	{
+		HashSet<MovingAgent> GetAgentsInSightWithTag (string tag);
+	}
+		
+	public class AgentSight : MonoBehaviour, Sight
+	{
+		public float sightRadius = 20f;
 
-    [RequireComponent(typeof(CircleCollider2D))]
-    public class AgentSight : MonoBehaviour, Sight
-    {
-        public float sightRadius = 20f;
+		private static AgentDatabase AGENT_DB;
 
-        public string[] tagNames;
+		private int m_ID;
 
-        private readonly static List<MovingAgent> EMPTY_LIST = new List<MovingAgent>();
 
-        private Dictionary<string, List<MovingAgent>> m_AgentsInSight = new Dictionary<string, List<MovingAgent>>();
+		void Awake ()
+		{
+			m_ID = transform.gameObject.GetInstanceID ();
 
-        private int m_ID;
+			if (AGENT_DB == null) {
+				AGENT_DB = FindObjectOfType<AgentDatabase> ();
+			}
+		}
 
-        //public List<MovingAgent> vegetationInSight { get; private set; }
+		public HashSet<MovingAgent> GetAgentsInSightWithTag (string tag)
+		{
+			var allAgents = AGENT_DB.GetAgentsWithTag (tag);
 
-        void Awake()
-        {
-            m_ID = transform.parent.gameObject.GetInstanceID();
-        }
+			if (allAgents.Count > 0) {
 
-        void Start()
-        {
-            var collider = GetComponent<CircleCollider2D>();
-            collider.radius = sightRadius;
-            collider.isTrigger = true;
+				var agentsInSight = new HashSet<MovingAgent> ();
 
-            foreach(var tag in tagNames)
-            {
-                m_AgentsInSight.Add(tag, new List<MovingAgent>());
-            }
-        }
+				foreach (var agent in allAgents) {
 
-        public List<MovingAgent> GetAgentsInSightWithTag(string tag)
-        {
-            if(m_AgentsInSight.ContainsKey(tag))
-            {
-                return m_AgentsInSight[tag];
-            }
+					if (agent.transform.gameObject.GetInstanceID ().Equals (m_ID)) {
+						continue;
+					}
 
-            return EMPTY_LIST;
-        }
+					float to = (agent.transform.position - transform.position).sqrMagnitude;
 
-        public void Clear()
-        {
-            foreach (var tag in tagNames)
-            {
-                m_AgentsInSight[tag].Clear();
-            }
-        }
+					if (to < sightRadius * sightRadius) {
+						agentsInSight.Add (agent);
+					}
+				}
 
-        void OnTriggerEnter2D(Collider2D other)
-        {
-            if(!m_AgentsInSight.ContainsKey(other.gameObject.tag)
-                || other.gameObject.GetInstanceID().Equals(m_ID))
-            {
-                return;
-            }
+				return agentsInSight;
+			}
 
-            m_AgentsInSight[other.gameObject.tag].Add(other.GetComponent<MovingAgent>());
+			return allAgents;
+		}
 
-           
-        }
-
-        void OnTriggerExit2D(Collider2D other)
-        {
-            if (!m_AgentsInSight.ContainsKey(other.gameObject.tag)
-                || other.gameObject.GetInstanceID().Equals(m_ID))
-            {
-                return;
-            }
-
-            m_AgentsInSight[other.gameObject.tag].Remove(other.GetComponent<MovingAgent>());
-
-        }
-    }
+	}
 }

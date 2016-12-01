@@ -23,6 +23,8 @@ namespace Automation
         void Mutate();
 		void DoUpdate();
 		void Disable();
+		void Kill();
+		void IncrementEnergy(int amount);
 	}
 
 	[RequireComponent(typeof(GAAgentMovement))]
@@ -41,7 +43,7 @@ namespace Automation
 
 		public bool isAddedToPool { get; set; }
 
-        private static readonly float ENERGY_DECREMENT_OFFSET = 1f;
+        private static readonly float ENERGY_DECREMENT_OFFSET = 10f;
 
 
         private static GASimulation m_GA;
@@ -82,6 +84,16 @@ namespace Automation
 		public void Disable()
 		{
 			gameObject.SetActive (false);
+		}
+
+		public void Kill()
+		{
+			m_currentEnergy = 0;
+		}
+
+		public void IncrementEnergy(int amount)
+		{
+			m_currentEnergy = Mathf.Min (m_currentEnergy + amount, maxEnergy);
 		}
 
 		public void DoUpdate ()

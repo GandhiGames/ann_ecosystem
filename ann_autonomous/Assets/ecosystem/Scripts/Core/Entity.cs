@@ -9,7 +9,7 @@ namespace Automation
         float maxVelocity { get; }
         Vector2 velocity { get; }
         Vector2 heading { get; }
-        Vector2 position { get; }
+		Transform transform { get; }
     }
 
     /// <summary>
@@ -37,37 +37,55 @@ namespace Automation
 
         public Vector2 heading { get; private set; }
         public Vector2 velocity { get; private set; }
-        public Vector2 position { get { return transform.position; } }
+		//public Transform ownerTransform { get { return transform; } }
 
         private BehaviourManager m_BehaviourManager;
         private Smoother m_Smoother;
+
+		private static AgentDatabase AGENT_DB;
+
+		void Awake()
+		{
+			if (AGENT_DB == null) {
+				AGENT_DB = FindObjectOfType<AgentDatabase> ();
+			}
+
+			m_BehaviourManager = GetComponent<BehaviourManager>();
+
+			if (smoothing)
+			{
+
+				// If smoother attached then use that.
+				m_Smoother = GetComponent<Smoother>();
+
+				// Else add smoother componenet.
+				if (!m_Smoother)
+				{
+					m_Smoother = gameObject.AddComponent<Smoother>();
+				}
+			}
+		}
 
         /// <summary>
         /// Gets behaviour manager and smoother (if smoothing is enabled) and sets heading to an arbitrary position. 
         /// </summary>
         void Start()
         {
-            m_BehaviourManager = GetComponent<BehaviourManager>();
-
-            velocity = Vector2.zero;
+   	       	velocity = Vector2.zero;
 
             float rotation = Random.Range(0f, 2f) * (Mathf.PI * 2);
             heading = new Vector2((float)Mathf.Sin(rotation), (float)-Mathf.Cos(rotation));
-
-            if (smoothing)
-            {
-
-                // If smoother attached then use that.
-                m_Smoother = GetComponent<Smoother>();
-
-                // Else add smoother componenet.
-                if (!m_Smoother)
-                {
-                    m_Smoother = gameObject.AddComponent<Smoother>();
-                }
-            }
-
         }
+
+		void OnEnable()
+		{
+			AGENT_DB.Add (this);
+		}
+
+		void OnDisable()
+		{
+			AGENT_DB.Remove (this);
+		}
 
         private Vector2 PerformSmootingIfEnabled(Vector2 vel)
         {
