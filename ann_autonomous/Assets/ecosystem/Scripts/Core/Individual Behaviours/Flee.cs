@@ -20,7 +20,7 @@ namespace Automation
 
 		public override Vector2 GetForce ()
 		{
-			var player = m_Sight.GetAgentsInSightWithTag (tagName);
+			var player = m_Sight.GetAgentsInRangeWithTag (tagName);
 
 			if (player.Count == 0) {
 				return Vector2.zero;

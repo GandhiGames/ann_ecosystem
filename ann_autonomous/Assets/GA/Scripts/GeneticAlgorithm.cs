@@ -7,6 +7,8 @@ namespace Automation
 
 	public class GeneticAlgorithm
 	{
+        public int generationNumber { get; private set; }
+
 		private List<GAAgent> m_Agents;
 		private List<GAAgent> m_AgentPool = new List<GAAgent> ();
 		//private int m_AgentsCreated = 0;
@@ -17,7 +19,6 @@ namespace Automation
 		private bool m_RandomCrossoverPoint;
 		private int m_MaxPoolSize;
 		private float m_MutationChance;
-		private int m_GenerationNum;
 
 		private GameObject m_AgentPrefab;
 
@@ -39,7 +40,7 @@ namespace Automation
 			m_MutationChance = Mathf.Clamp01 (mutationChance);
 			m_Agents = initialAgents;
 			m_NumSpawnedFromPool = 0;
-			m_GenerationNum = 0;
+			generationNumber = 0;
 
 			m_AnnInput = initialAgents [0].GetNeuralNetwork ().numOfInput;
 			m_AnnOutput = initialAgents [0].GetNeuralNetwork ().numOfOutput;
@@ -177,7 +178,7 @@ namespace Automation
 		{
 			m_NumSpawnedFromPool++;
 			if (m_NumSpawnedFromPool % m_MaxPoolSize == 0) {
-				m_GenerationNum++;
+				generationNumber++;
 			}
 		}
 

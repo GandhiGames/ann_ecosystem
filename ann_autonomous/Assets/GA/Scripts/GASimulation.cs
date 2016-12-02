@@ -6,21 +6,26 @@ namespace Automation
 {
 	public class GASimulation : MonoBehaviour
 	{
+        [Header("Predators")]
 		public int maxPredators;
 		public GameObject predatorPrefab;
 		public int predatorPoolSize = 20;
 
-		public int maxPrey;
+        [Header("Prey")]
+        public int maxPrey;
 		public GameObject preyPrefab;
 		public int preyPoolSize = 10;
 
-		public int maxVegetation;
+        [Header("Vegetation")]
+        public int maxVegetation;
 		public GameObject vegetationPrefab;
 
-		public float mutationRate;
+        [Header("GA")]
+        public float mutationRate;
 		public float maxPerturbation;
 
 		private List<GeneticAlgorithm> m_Algorithms;
+        public List<GeneticAlgorithm> algorithms { get { return m_Algorithms; } }
 
 		void Start ()
 		{
@@ -35,7 +40,7 @@ namespace Automation
 					var agentObj = (GameObject)MonoBehaviour.Instantiate (predatorPrefab, pos, Quaternion.identity);
 					var agent = agentObj.GetComponent<GAAgent> ();
 
-					agent.SetNeuralNetwork (new NeuralNet (2, 5, 1, 22));
+					agent.SetNeuralNetwork (new NeuralNet (24, 2, 1, 22));
 
 					predators.Add (agent);
 				}
@@ -53,7 +58,7 @@ namespace Automation
 					var agentObj = (GameObject)MonoBehaviour.Instantiate (preyPrefab, pos, Quaternion.identity);
 					var agent = agentObj.GetComponent<GAAgent> ();
 
-					agent.SetNeuralNetwork (new NeuralNet (2, 6, 1, 22));
+					agent.SetNeuralNetwork (new NeuralNet (24, 6, 1, 22));
 
 					prey.Add (agent);
 				}

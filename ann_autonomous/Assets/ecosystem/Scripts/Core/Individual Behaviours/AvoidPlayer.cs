@@ -30,7 +30,7 @@ namespace Automation
 		{
 			Vector2 steeringForce = Vector2.zero;
 
-			var entities = m_Sight.GetAgentsInSightWithTag (tagName);
+			var entities = m_Sight.GetAgentsInRangeWithTag (tagName);
                 
 			
 			foreach (var obj in entities) {

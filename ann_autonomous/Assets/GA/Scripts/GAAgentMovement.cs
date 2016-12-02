@@ -15,6 +15,8 @@ namespace Automation
 		// Friction the agent experiences travelling.
 		public float friction = 1.01f;
 
+        public float maxTurnAngle = 30f;
+
 		public bool lockMovementOnSingleAxis = false;
 		// Smoothing sums an a number of the agents movement updates. Use this if the agents movement is twitchy.
 		public bool smoothing = true;

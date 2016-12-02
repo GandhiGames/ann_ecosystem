@@ -6,13 +6,20 @@ namespace Automation
 {
 	public interface Sight
 	{
-		HashSet<MovingAgent> GetAgentsInSightWithTag (string tag);
+        float distance { get; }
+        float radius { get; }
+        HashSet<MovingAgent> GetAgentsInRangeWithTag (string tag);
 	}
 		
 	public class AgentSight : MonoBehaviour, Sight
 	{
-		public float sightRadius = 20f;
+		public float sightDistance = 20f;
 
+        [Range(0f, 360f)]
+        public float sightRadius = 360f;
+
+        public float distance { get { return sightDistance; } }
+        public float radius { get { return sightRadius; } }
 		private static AgentDatabase AGENT_DB;
 
 		private int m_ID;
@@ -27,13 +34,13 @@ namespace Automation
 			}
 		}
 
-		public HashSet<MovingAgent> GetAgentsInSightWithTag (string tag)
+		public HashSet<MovingAgent> GetAgentsInRangeWithTag (string tag)
 		{
 			var allAgents = AGENT_DB.GetAgentsWithTag (tag);
 
 			if (allAgents.Count > 0) {
 
-				var agentsInSight = new HashSet<MovingAgent> ();
+				var agentsInRange = new HashSet<MovingAgent> ();
 
 				foreach (var agent in allAgents) {
 
@@ -43,12 +50,12 @@ namespace Automation
 
 					float to = (agent.transform.position - transform.position).sqrMagnitude;
 
-					if (to < sightRadius * sightRadius) {
-						agentsInSight.Add (agent);
+					if (to < sightDistance * sightDistance) {
+						agentsInRange.Add (agent);
 					}
 				}
 
-				return agentsInSight;
+				return agentsInRange;
 			}
 
 			return allAgents;
