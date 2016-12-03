@@ -5,10 +5,14 @@ namespace Automation
 {
 	public class AgentDatabase : MonoBehaviour
 	{
-		private Dictionary<string, HashSet<MovingAgent>> m_AgentsInSimulation = new Dictionary<string, HashSet<MovingAgent>> ();
-		private readonly static HashSet<MovingAgent> EMPTY_LIST = new HashSet<MovingAgent> ();
+        private readonly static HashSet<MovingAgent> EMPTY_MOVING_LIST = new HashSet<MovingAgent>();
+        private readonly static HashSet<StationaryAgent> EMPTY_STATIONARY_LIST = new HashSet<StationaryAgent>();
 
-		public void Add (MovingAgent agent)
+        private Dictionary<string, HashSet<MovingAgent>> m_AgentsInSimulation = new Dictionary<string, HashSet<MovingAgent>> ();
+        private Dictionary<string, HashSet<StationaryAgent>> m_StationaryAgentsInSimulation = new Dictionary<string, HashSet<StationaryAgent>>();
+
+
+        public void Add (MovingAgent agent)
 		{
 			var tag = agent.transform.gameObject.tag;
 
@@ -18,6 +22,18 @@ namespace Automation
 
 			m_AgentsInSimulation [tag].Add (agent);
 		}
+
+        public void Add(StationaryAgent agent)
+        {
+            var tag = agent.transform.gameObject.tag;
+
+            if (!m_StationaryAgentsInSimulation.ContainsKey(tag))
+            {
+                m_StationaryAgentsInSimulation.Add(tag, new HashSet<StationaryAgent>());
+            }
+
+            m_StationaryAgentsInSimulation[tag].Add(agent);
+        }
 
 		public void Remove (MovingAgent agent)
 		{
@@ -30,18 +46,46 @@ namespace Automation
 			m_AgentsInSimulation [tag].Remove (agent);
 		}
 
-		public HashSet<MovingAgent> GetAgentsWithTag (string tag)
+        public void Remove(StationaryAgent agent)
+        {
+            var tag = agent.transform.gameObject.tag;
+
+            if (!m_StationaryAgentsInSimulation.ContainsKey(tag))
+            {
+                return;
+            }
+
+            m_StationaryAgentsInSimulation[tag].Remove(agent);
+        }
+
+        public HashSet<MovingAgent> GetMovingAgentsWithTag (string tag)
 		{
 			if (m_AgentsInSimulation.ContainsKey (tag)) {
 				return m_AgentsInSimulation [tag];
 			}
 
-			if (EMPTY_LIST.Count > 0) {
-				EMPTY_LIST.Clear ();
+			if (EMPTY_MOVING_LIST.Count > 0) {
+				EMPTY_MOVING_LIST.Clear ();
 			}
 
-			return EMPTY_LIST;
+			return EMPTY_MOVING_LIST;
 
 		}
-	}
+
+        public HashSet<StationaryAgent> GetStationaryAgentsWithTag(string tag)
+        {
+            if (m_StationaryAgentsInSimulation.ContainsKey(tag))
+            {
+                return m_StationaryAgentsInSimulation[tag];
+            }
+
+            if (EMPTY_MOVING_LIST.Count > 0)
+            {
+                EMPTY_MOVING_LIST.Clear();
+            }
+
+            return EMPTY_STATIONARY_LIST;
+
+        }
+    }
 }

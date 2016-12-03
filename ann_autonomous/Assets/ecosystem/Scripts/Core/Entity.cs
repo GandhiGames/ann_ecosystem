@@ -4,6 +4,11 @@ using System.Collections.Generic;
 
 namespace Automation
 {
+    public interface StationaryAgent
+    {
+        Transform transform { get; }
+    }
+
     public interface MovingAgent
     {
         float maxVelocity { get; }

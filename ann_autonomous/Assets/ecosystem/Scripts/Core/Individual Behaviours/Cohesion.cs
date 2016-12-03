@@ -30,7 +30,7 @@ namespace Automation
 		{
 			Vector2 centreOfMass = Vector2.zero;
 
-			var entities = m_Sight.GetAgentsInRangeWithTag (tagName);
+			var entities = m_Sight.GetMovingAgentsInRangeWithTag (tagName);
                 
                
 

@@ -21,8 +21,7 @@ namespace Automation
 			if (other.CompareTag ("Prey")) {
 				m_Agent.IncrementEnergy (energyIncrementOnPreyContact);
 				other.GetComponent<GAAgent> ().Kill ();
-			} else if(other.CompareTag("Predator"))
-            {
+			} else if(other.CompareTag("Predator")) {
                 m_Agent.IncrementEnergy(-energyDecrementOnPredContact);
             }
 		}

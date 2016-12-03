@@ -23,9 +23,20 @@ namespace Automation
         [Header("GA")]
         public float mutationRate;
 		public float maxPerturbation;
+        public Vector2 minXYSpawn = new Vector2(-15f, 15f);
 
 		private List<GeneticAlgorithm> m_Algorithms;
         public List<GeneticAlgorithm> algorithms { get { return m_Algorithms; } }
+
+        private static AgentDatabase AGENT_DATABASE;
+
+        void Awake()
+        {
+            if(AGENT_DATABASE == null)
+            {
+                AGENT_DATABASE = FindObjectOfType<AgentDatabase>();
+            }
+        }
 
 		void Start ()
 		{
@@ -36,11 +47,11 @@ namespace Automation
 
 				for (int i = 0; i < maxPredators; i++) {
     
-					var pos = new Vector2 (Random.Range (-10f, 10f), Random.Range (-10f, 10f));
-					var agentObj = (GameObject)MonoBehaviour.Instantiate (predatorPrefab, pos, Quaternion.identity);
+					var pos = new Vector2 (Random.Range (minXYSpawn.x, minXYSpawn.y), Random.Range (minXYSpawn.x, minXYSpawn.y));
+					var agentObj = (GameObject)Instantiate (predatorPrefab, pos, Quaternion.identity);
 					var agent = agentObj.GetComponent<GAAgent> ();
 
-					agent.SetNeuralNetwork (new NeuralNet (24, 2, 1, 22));
+					agent.SetNeuralNetwork (new NeuralNet (36, 2, 1, 22));
 
 					predators.Add (agent);
 				}
@@ -54,11 +65,11 @@ namespace Automation
 
 				for (int i = 0; i < maxPrey; i++) {
 
-					var pos = new Vector2 (Random.Range (-10f, 10f), Random.Range (-10f, 10f));
-					var agentObj = (GameObject)MonoBehaviour.Instantiate (preyPrefab, pos, Quaternion.identity);
+                    var pos = new Vector2(Random.Range(minXYSpawn.x, minXYSpawn.y), Random.Range(minXYSpawn.x, minXYSpawn.y));
+                    var agentObj = (GameObject)Instantiate (preyPrefab, pos, Quaternion.identity);
 					var agent = agentObj.GetComponent<GAAgent> ();
 
-					agent.SetNeuralNetwork (new NeuralNet (24, 6, 1, 22));
+					agent.SetNeuralNetwork (new NeuralNet (36, 2, 1, 22));
 
 					prey.Add (agent);
 				}
@@ -73,9 +84,22 @@ namespace Automation
 			foreach (var ga in m_Algorithms) {
 				ga.DoUpdate ();
 			}
+
+            int vegToSpawn = NumOfVegetationToSpawn();
+
+            for(int i = 0; i < vegToSpawn; i++)
+            {
+                var pos = new Vector2(Random.Range(minXYSpawn.x, minXYSpawn.y), Random.Range(minXYSpawn.x, minXYSpawn.y));
+                Instantiate(vegetationPrefab, pos, Quaternion.identity);
+            }
 		}
 
-	
+	    private int NumOfVegetationToSpawn()
+        {
+            int numOfVeg = AGENT_DATABASE.GetStationaryAgentsWithTag("Vegetation").Count;
+
+            return maxVegetation - numOfVeg;
+        }
 
 	}
 }
