@@ -4,17 +4,33 @@ using System.Collections.Generic;
 
 namespace Automation
 {
+    [System.Serializable]
+    public struct NeuralNetData
+    {
+        public int input;
+        public int output;
+        public int hiddenLayers;
+        public int neuronsPerHiddenLayer;
+
+        public NeuralNet ToNeuralNet()
+        {
+            return new NeuralNet(input, output, hiddenLayers, neuronsPerHiddenLayer);
+        }
+    }
+
 	public class GASimulation : MonoBehaviour
 	{
         [Header("Predators")]
 		public int maxPredators;
 		public GameObject predatorPrefab;
 		public int predatorPoolSize = 20;
+        public NeuralNetData predatorANN;
 
         [Header("Prey")]
         public int maxPrey;
 		public GameObject preyPrefab;
 		public int preyPoolSize = 10;
+        public NeuralNetData preyANN;
 
         [Header("Vegetation")]
         public int maxVegetation;
@@ -51,7 +67,7 @@ namespace Automation
 					var agentObj = (GameObject)Instantiate (predatorPrefab, pos, Quaternion.identity);
 					var agent = agentObj.GetComponent<GAAgent> ();
 
-					agent.SetNeuralNetwork (new NeuralNet (36, 2, 1, 22));
+					agent.SetNeuralNetwork (predatorANN.ToNeuralNet());
 
 					predators.Add (agent);
 				}
@@ -69,7 +85,7 @@ namespace Automation
                     var agentObj = (GameObject)Instantiate (preyPrefab, pos, Quaternion.identity);
 					var agent = agentObj.GetComponent<GAAgent> ();
 
-					agent.SetNeuralNetwork (new NeuralNet (36, 2, 1, 22));
+					agent.SetNeuralNetwork (preyANN.ToNeuralNet());
 
 					prey.Add (agent);
 				}

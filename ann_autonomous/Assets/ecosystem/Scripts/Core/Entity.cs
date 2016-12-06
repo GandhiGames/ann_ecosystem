@@ -4,17 +4,17 @@ using System.Collections.Generic;
 
 namespace Automation
 {
-    public interface StationaryAgent
+    public interface SimulatedAgent
     {
         Transform transform { get; }
     }
 
-    public interface MovingAgent
+
+    public interface MovingAgent : SimulatedAgent
     {
         float maxVelocity { get; }
         Vector2 velocity { get; }
         Vector2 heading { get; }
-		Transform transform { get; }
     }
 
     /// <summary>

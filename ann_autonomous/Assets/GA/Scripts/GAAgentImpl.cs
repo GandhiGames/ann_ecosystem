@@ -14,7 +14,7 @@ namespace Automation
 
 		bool isAlive { get; }
 
-		int timeAlive { get; }
+		float timeAlive { get; }
 
 		bool isAddedToPool { get; set; }
 
@@ -39,12 +39,11 @@ namespace Automation
 
 		public bool isAlive { get { return m_currentEnergy > 0; } }
 
-		public int timeAlive { get; private set; }
+		public float timeAlive { get; private set; }
 
 		public bool isAddedToPool { get; set; }
 
         private static readonly float ENERGY_DECREMENT_OFFSET = 1f;
-
 
         private static GASimulation m_GA;
 
@@ -55,8 +54,6 @@ namespace Automation
 
         private Sight m_Sight;
 
-        private Vector2 m_Force;
-
 		void Awake ()
 		{
 			if (m_GA == null) {
@@ -64,7 +61,6 @@ namespace Automation
 			}
 
 			m_Movement = GetComponent<GAAgentMovement> ();
-			//m_BehaviourManager = GetComponent<BehaviourManager> ();
             m_Sight = GetComponentInChildren<Sight>();
 		}
 
@@ -73,6 +69,7 @@ namespace Automation
             m_currentEnergy = maxEnergy;
         }
 
+        /*
 		public void Reset ()
 		{
             //m_BehaviourManager.Reset ();
@@ -83,6 +80,7 @@ namespace Automation
 
 			isAddedToPool = false;
 		}
+        */
 
 		public void Disable()
 		{
@@ -105,7 +103,7 @@ namespace Automation
 				return;
 			}
 
-			timeAlive++;
+			timeAlive += Time.deltaTime;
 
 			var force = GetForce ();
 
@@ -136,7 +134,18 @@ namespace Automation
 
 			var otherAgent = (GAAgent)obj;
 
-			return otherAgent.timeAlive - this.timeAlive;
+            if(otherAgent.timeAlive > this.timeAlive)
+            {
+                return -1;
+            }
+            else if(otherAgent.timeAlive < this.timeAlive)
+            {
+                return 1;
+            }
+            else
+            {
+                return 0;
+            }
 		}
 
 		public List<float> GetNetworkWeights ()
@@ -158,82 +167,24 @@ namespace Automation
 		{
             List<float> neuralNetInput = new List<float>();
 
-            neuralNetInput.AddRange (GetWeights(m_Sight.GetMovingAgentsInRangeWithTag("Prey")));
-			neuralNetInput.AddRange (GetWeights(m_Sight.GetMovingAgentsInRangeWithTag("Predator")));
-            neuralNetInput.AddRange(GetWeights(m_Sight.GetStationaryAgentsInRangeWithTag("Vegetation")));
+            neuralNetInput.AddRange (GetWeights<MovingAgent>(m_Sight.GetMovingAgentsInRangeWithTag("Prey")));
+			neuralNetInput.AddRange (GetWeights<MovingAgent>(m_Sight.GetMovingAgentsInRangeWithTag("Predator")));
+            neuralNetInput.AddRange (GetWeights<SimulatedAgent>(m_Sight.GetStationaryAgentsInRangeWithTag("Vegetation")));
 
-            List<float> outputs = new List<float>();
-            outputs.AddRange (m_NeuralNet.Update (neuralNetInput));
+            List<float> outputs = m_NeuralNet.Update(neuralNetInput);
 
-
-            // output in range [0..1] this converts range to [-0.5..0.5] used for turning.
+            // output in range [0..1] this converts range to [-0.5..0.5] used for turning left or right.
             float turnForce = outputs[0] - 0.5f;
             float velocityMulti = outputs[1];
 
             return m_Movement.heading.Rotate((m_Movement.maxTurnAngle * 2f) * turnForce) * (velocityMulti * m_Movement.maxVelocity);
 		}
 
-        private float[] GetWeights(HashSet<MovingAgent> agentsInSight)
+        
+
+        private float[] GetWeights<T>(HashSet<T> agentsInSight) where T : SimulatedAgent
         {
             var input = new float[12];
-
-            for (int i = 0; i < input.Length; i++)
-            {
-                input[i] = 0;
-            }
-
-            foreach (var agent in agentsInSight)
-            {
-
-                var forward = m_Movement.heading;
-                var right = new Vector2(forward.y, -forward.x); 
-
-                Vector3 to = agent.transform.position - transform.position;
-                float angle = Vector2.Angle(to, forward);
-
-                // Determine if the degree value should be negative.  Here, a positive value
-                // from the dot product means that our vector is on the right of the reference vector   
-                // whereas a negative value means we're on the left.
-                float sign = Mathf.Sign(Vector2.Dot(to, right));
-   
-                // Converted to signed and then normalise in the range positive 0 to sight range.
-                float finalAngle = (sign * angle) + (m_Sight.radius * 0.5f);
-
-                if (finalAngle > m_Sight.radius || finalAngle < 0f)
-                {
-                    //print("Not in sight: " + finalAngle);
-                    continue;
-                }
-
-                int step = (int)m_Sight.radius / input.Length;
-
-                //print("Angle " + finalAngle);
-                //print("step: " + step);
-
-                for (int i = 0; i < input.Length; i++)
-                {
-                    //print((step * i) + " to " + (step * (i + 1)) );
-                    if (finalAngle >= step * i && finalAngle <= step * (i + 1))
-                    {
-                           // print("storing : " + i);
-                        input[i] = 1;
-                    }
-
-                }         
-            }
-
-            return input;
-        }
-
-
-        private float[] GetWeights(HashSet<StationaryAgent> agentsInSight)
-        {
-            var input = new float[12];
-
-            for (int i = 0; i < input.Length; i++)
-            {
-                input[i] = 0;
-            }
 
             foreach (var agent in agentsInSight)
             {
@@ -270,6 +221,10 @@ namespace Automation
                     {
                         // print("storing : " + i);
                         input[i] = 1;
+                    }
+                    else
+                    {
+                        input[i] = 0;
                     }
 
                 }

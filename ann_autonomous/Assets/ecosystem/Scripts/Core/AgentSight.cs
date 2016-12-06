@@ -9,7 +9,7 @@ namespace Automation
         float distance { get; }
         float radius { get; }
         HashSet<MovingAgent> GetMovingAgentsInRangeWithTag (string tag);
-        HashSet<StationaryAgent> GetStationaryAgentsInRangeWithTag(string tag);
+        HashSet<SimulatedAgent> GetStationaryAgentsInRangeWithTag(string tag);
 	}
 
     public class AgentSight : MonoBehaviour, Sight
@@ -67,14 +67,14 @@ namespace Automation
             return allAgents;
         }
 
-        public HashSet<StationaryAgent> GetStationaryAgentsInRangeWithTag(string tag)
+        public HashSet<SimulatedAgent> GetStationaryAgentsInRangeWithTag(string tag)
         {
             var allAgents = AGENT_DB.GetStationaryAgentsWithTag(tag);
 
             if (allAgents.Count > 0)
             {
 
-                var agentsInRange = new HashSet<StationaryAgent>();
+                var agentsInRange = new HashSet<SimulatedAgent>();
 
                 foreach (var agent in allAgents)
                 {

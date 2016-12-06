@@ -3,7 +3,7 @@
 namespace Automation
 {
 
-    public class GAVegetation : MonoBehaviour, StationaryAgent
+    public class GAVegetation : MonoBehaviour, SimulatedAgent
     {
         private static AgentDatabase AGENT_DATABASE;
 

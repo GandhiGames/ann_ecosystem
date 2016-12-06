@@ -6,10 +6,10 @@ namespace Automation
 	public class AgentDatabase : MonoBehaviour
 	{
         private readonly static HashSet<MovingAgent> EMPTY_MOVING_LIST = new HashSet<MovingAgent>();
-        private readonly static HashSet<StationaryAgent> EMPTY_STATIONARY_LIST = new HashSet<StationaryAgent>();
+        private readonly static HashSet<SimulatedAgent> EMPTY_STATIONARY_LIST = new HashSet<SimulatedAgent>();
 
         private Dictionary<string, HashSet<MovingAgent>> m_AgentsInSimulation = new Dictionary<string, HashSet<MovingAgent>> ();
-        private Dictionary<string, HashSet<StationaryAgent>> m_StationaryAgentsInSimulation = new Dictionary<string, HashSet<StationaryAgent>>();
+        private Dictionary<string, HashSet<SimulatedAgent>> m_StationaryAgentsInSimulation = new Dictionary<string, HashSet<SimulatedAgent>>();
 
 
         public void Add (MovingAgent agent)
@@ -23,13 +23,13 @@ namespace Automation
 			m_AgentsInSimulation [tag].Add (agent);
 		}
 
-        public void Add(StationaryAgent agent)
+        public void Add(SimulatedAgent agent)
         {
             var tag = agent.transform.gameObject.tag;
 
             if (!m_StationaryAgentsInSimulation.ContainsKey(tag))
             {
-                m_StationaryAgentsInSimulation.Add(tag, new HashSet<StationaryAgent>());
+                m_StationaryAgentsInSimulation.Add(tag, new HashSet<SimulatedAgent>());
             }
 
             m_StationaryAgentsInSimulation[tag].Add(agent);
@@ -46,7 +46,7 @@ namespace Automation
 			m_AgentsInSimulation [tag].Remove (agent);
 		}
 
-        public void Remove(StationaryAgent agent)
+        public void Remove(SimulatedAgent agent)
         {
             var tag = agent.transform.gameObject.tag;
 
@@ -72,7 +72,7 @@ namespace Automation
 
 		}
 
-        public HashSet<StationaryAgent> GetStationaryAgentsWithTag(string tag)
+        public HashSet<SimulatedAgent> GetStationaryAgentsWithTag(string tag)
         {
             if (m_StationaryAgentsInSimulation.ContainsKey(tag))
             {

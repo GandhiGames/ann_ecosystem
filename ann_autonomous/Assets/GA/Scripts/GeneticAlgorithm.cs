@@ -50,18 +50,19 @@ namespace Automation
 			m_AgentPrefab = agentPrefab;
 			m_TotalFitnessScore = 0;
 
-			pool = new GameObject ("Pool");
+			pool = new GameObject (agentPrefab.name +  " Pool");
 
 		}
 
 		public void DoUpdate ()
 		{
+            Debug.Log(m_Agents.Count);
 			for (int i = 0; i < m_Agents.Count; i++) {
 				if (m_Agents [i].isAlive) {
 					m_Agents [i].DoUpdate ();
 				} else {
 					UpdatePool (m_Agents [i]);
-					//Debug.Log (m_AgentPool.Count);
+
 					if (m_AgentPool.Count > 1) {
 
 						CalculateTotalFitness ();
