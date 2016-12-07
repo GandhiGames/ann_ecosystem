@@ -8,6 +8,7 @@ namespace Automation
     public class GAPrey : MonoBehaviour
     {
         public int energyIncrementOnVegContact = 15;
+        public int energyDecrementOnPreyContact = 5;
 
         private GAAgent m_Agent;
 
@@ -22,6 +23,10 @@ namespace Automation
             {
                 m_Agent.IncrementEnergy(energyIncrementOnVegContact);
                 other.GetComponent<GAVegetation>().Remove();
+            }
+            else if (other.CompareTag("Prey"))
+            {
+                m_Agent.IncrementEnergy(-energyDecrementOnPreyContact);
             }
 
         }

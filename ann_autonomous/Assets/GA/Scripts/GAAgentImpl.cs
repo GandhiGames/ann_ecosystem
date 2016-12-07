@@ -24,7 +24,7 @@ namespace Automation
 		void DoUpdate();
 		void Disable();
 		void Kill();
-		void IncrementEnergy(int amount);
+		void IncrementEnergy(float amount);
 	}
 
 	[RequireComponent(typeof(GAAgentMovement))]
@@ -43,7 +43,7 @@ namespace Automation
 
 		public bool isAddedToPool { get; set; }
 
-        private static readonly float ENERGY_DECREMENT_OFFSET = 1f;
+        public float energyDecrementMultiplier = 0.5f;
 
         private static GASimulation m_GA;
 
@@ -92,9 +92,16 @@ namespace Automation
 			m_currentEnergy = 0;
 		}
 
-		public void IncrementEnergy(int amount)
+		public void IncrementEnergy(float amount)
 		{
-			m_currentEnergy = Mathf.Min (m_currentEnergy + amount, maxEnergy);
+            if (amount > 0)
+            {
+                m_currentEnergy = Mathf.Min(m_currentEnergy + amount, maxEnergy);
+            }
+            else if (amount < 0)
+            {
+                m_currentEnergy = Mathf.Max(m_currentEnergy + amount, 0);
+            }
 		}
 
 		public void DoUpdate ()
@@ -109,7 +116,7 @@ namespace Automation
 
 			m_Movement.DoMovement (force);
 
-            m_currentEnergy -= m_Movement.velocity.magnitude + ENERGY_DECREMENT_OFFSET * Time.deltaTime;
+            m_currentEnergy -= (m_Movement.velocity.magnitude + energyDecrementMultiplier) * Time.deltaTime;
 		}
 
 		public void Mutate ()
@@ -136,11 +143,11 @@ namespace Automation
 
             if(otherAgent.timeAlive > this.timeAlive)
             {
-                return -1;
+                return 1;
             }
             else if(otherAgent.timeAlive < this.timeAlive)
             {
-                return 1;
+                return -1;
             }
             else
             {
@@ -233,5 +240,24 @@ namespace Automation
             return input;
         }
 
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is GAAgentImpl))
+            {
+                return false;
+            }
+
+            if (obj == this)
+            {
+                return true;
+            }
+
+            var other = (GAAgentImpl)obj;
+
+            return other.GetNeuralNetwork().Equals(GetNeuralNetwork());
+
+
+        }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace Automation
@@ -56,12 +55,17 @@ namespace Automation
 
 		public void DoUpdate ()
 		{
-            Debug.Log(m_Agents.Count);
 			for (int i = 0; i < m_Agents.Count; i++) {
 				if (m_Agents [i].isAlive) {
+
+               
+
 					m_Agents [i].DoUpdate ();
 				} else {
-					UpdatePool (m_Agents [i]);
+
+                 
+
+                    UpdatePool (m_Agents [i], i);
 
 					if (m_AgentPool.Count > 1) {
 
@@ -71,8 +75,12 @@ namespace Automation
 						var parentTwo = FitnessProportionateSelection ();
 
 						if (!parentOne.Equals (parentTwo)) {
-							CreateAgentFromCrossover (parentOne, parentTwo, i);
-						}
+                            if (pool.name.Equals("Prey Pool"))
+                            {
+                                Debug.Log("Adding from pool " + i);
+                            }
+                            CreateAgentFromCrossover (parentOne, parentTwo, i);
+						} 
 
 					}
 
@@ -81,10 +89,16 @@ namespace Automation
 			}
 		}
 
-		private void UpdatePool (GAAgent agent)
+		private void UpdatePool (GAAgent agent, int i)
 		{
 			if (!agent.isAddedToPool) {
-				agent.Disable ();
+
+                if (pool.name.Equals("Prey Pool"))
+                {
+                    Debug.Log("Removing " + i);
+                }
+
+                agent.Disable ();
 				agent.isAddedToPool = true;
 
 				m_AgentPool.Add (agent);
@@ -96,8 +110,15 @@ namespace Automation
 					MonoBehaviour.Destroy (m_AgentPool [m_AgentPool.Count - 1].owner);
 					m_AgentPool.RemoveAt (m_AgentPool.Count - 1);
 				}
-			}
-		}
+
+                if (pool.name.Equals("Prey Pool"))
+                {
+                    Debug.Log("Pool size " + m_AgentPool.Count);
+
+                }
+
+            }
+        }
 
 		private void CalculateTotalFitness ()
 		{
@@ -144,14 +165,21 @@ namespace Automation
 
 			float fitnessTotal = 0;
 
-			for (int i = 0; i < m_AgentPool.Count; i++) {
-				fitnessTotal += m_AgentPool [i].timeAlive;
+            for (int i = 0; i < m_AgentPool.Count; i++)
+            {
+                fitnessTotal += m_AgentPool[i].timeAlive;
 
-				if (fitnessTotal > randomSlice) {
-					choosenAgent = m_AgentPool [i];
-					break;
-				}
-			}
+                if (fitnessTotal > randomSlice)
+                {
+                    choosenAgent = m_AgentPool[i];
+                    break;
+                }
+
+                if (pool.name.Equals("Prey Pool"))
+                {
+                    Debug.Log("Chose " + i + " of " + m_AgentPool.Count);
+                }
+            }
 
 			return choosenAgent;
 		}

@@ -25,5 +25,15 @@ namespace Automation
                 m_Agent.IncrementEnergy(-energyDecrementOnPredContact);
             }
 		}
-	}
+
+        void OnTriggerStay2D(Collider2D other)
+        {
+            /*
+            if (other.CompareTag("Predator"))
+            {
+                m_Agent.IncrementEnergy(-Time.deltaTime);
+            }
+            */
+        }
+    }
 }
